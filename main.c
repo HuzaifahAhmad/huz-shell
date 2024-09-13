@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <string.h>
-#define MAX_LIMIT 50
+#include <stdbool.h>
 
-void wildcard_globbing(char inputString[MAX_LIMIT]);
+#define MAX_LIMIT 100
+
+char wildcard_globbing(char inputString[MAX_LIMIT]);
 
 int main() {
     char get_command_from_user[MAX_LIMIT];
@@ -37,30 +39,62 @@ int main() {
 }
 
 // checks for wildcard characters (?, *, #)
-void wildcard_globbing(char inputString[MAX_LIMIT]) 
+char wildcard_globbing(char inputString[MAX_LIMIT]) 
 {
     char question_mark = '?';
-    char exclamation_mark = '*';
-    char hashtag = '#';
-
+    char asterisk = '*';
+    char hash_tag = '#';
     char delimiter[] = " ";
+    char copyInputString[MAX_LIMIT];
+    char *p_tokenized_string;
+    bool isWildcard = false;
+
+    // copy input string
+    strcpy(copyInputString, inputString);
 
     // get first word from command
-    char *p_tokenized_string = strtok(inputString, delimiter);
+    p_tokenized_string = strtok(copyInputString, delimiter);
 
     // get the rest of words from command
     while (p_tokenized_string != NULL) 
     {
-        printf("%s\n", p_tokenized_string);
-
+        // ?
         if (strchr(p_tokenized_string, question_mark) != NULL) 
+        {  
+            printf("?ISwildcard\n");
+            isWildcard = true;
+            break;
+        }
+        // !
+        if (strchr(p_tokenized_string, asterisk) != NULL) 
         {
-            printf("WILDCARD!\n");
+            printf("*ISwildcard\n");
+            isWildcard = true;
+            break;
+        }
+        // #
+        if (strchr(p_tokenized_string, hash_tag) != NULL) 
+        {
+            printf("#ISwildcard\n");
+            isWildcard = true;
+            break;
         }
 
-
-
+        // continue with the next word
         p_tokenized_string = strtok(NULL, delimiter);
-    }    
+    }   
 
+    // wildcard character not present, return original
+    if (!isWildcard) 
+    {
+        printf("RETURN ORIGINAL ARRAY\n");
+        return *inputString;
+    } 
+    else
+    {
+        printf("RETURN MODIFIED ARRAY\n");
+        return *copyInputString;
+    }
+
+`    
 }
