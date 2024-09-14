@@ -64,14 +64,12 @@ char wildcard_globbing(char input_string[MAX_LIMIT])
         // * - matches zero or more characters
         if (strchr(p_tokenized_string, asterisk) != NULL) 
         {
-            printf("B4\n%s\n", copy_input_string);
             glob_t pglob;
-            int result_asterick = glob("*.tx``t", GLOB_NOCHECK, NULL, &pglob);
+            int result_asterick = glob("*.txt", GLOB_NOCHECK, NULL, &pglob);
             for (size_t i = 0; i < pglob.gl_pathc; i++)
-                printf("%zu: %s\n", i, pglob.gl_pathv[i]);
+                printf("%s\n", pglob.gl_pathv[i]);
             globfree(&pglob);
 
-            printf("*ISwildcard\n");
             is_wildcard = true;
             break;
         }
@@ -79,7 +77,12 @@ char wildcard_globbing(char input_string[MAX_LIMIT])
         // ? - Matches exactly one character
         if (strchr(p_tokenized_string, question_mark) != NULL) 
         {  
-            printf("?ISwildcard\n");
+            glob_t pglob2;
+            int result_q_mark = glob("file?.txt", GLOB_NOCHECK, NULL, &pglob2);
+            for (size_t i = 0; i < pglob2.gl_pathc; i++)
+                printf("%zu: %s\n", i, pglob2.gl_pathv[i]);
+            globfree(&pglob2);
+
             is_wildcard = true;
             break;
         }
@@ -92,13 +95,13 @@ char wildcard_globbing(char input_string[MAX_LIMIT])
     if (!is_wildcard) 
     {
         printf("RETURN ORIGINAL ARRAY\n");
+        printf("RETURN ARRAY: %s\n", input_string);
         return *input_string;
     } 
     else
     {
         printf("RETURN MODIFIED ARRAY\n");
+        printf("RETURN ARRAY: %s\n", copy_input_string);
         return *copy_input_string;
     }
-
-
 }
