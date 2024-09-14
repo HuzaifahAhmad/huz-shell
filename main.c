@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <glob.h>
+#include <fnmatch.h>
 
 #define MAX_LIMIT 100
 
@@ -39,44 +41,46 @@ int main() {
 }
 
 // checks for wildcard characters (?, *, #)
-char wildcard_globbing(char inputString[MAX_LIMIT]) 
+char wildcard_globbing(char input_string[MAX_LIMIT]) 
 {
     char question_mark = '?';
     char asterisk = '*';
-    char hash_tag = '#';
     char delimiter[] = " ";
-    char copyInputString[MAX_LIMIT];
+    char copy_input_string[MAX_LIMIT];
     char *p_tokenized_string;
-    bool isWildcard = false;
+    bool is_wildcard = false;
+    char *ptr_copy_input_string;
 
     // copy input string
-    strcpy(copyInputString, inputString);
+    strcpy(copy_input_string, input_string);
 
+    ptr_copy_input_string = copy_input_string;
     // get first word from command
-    p_tokenized_string = strtok(copyInputString, delimiter);
+    p_tokenized_string = strtok(copy_input_string, delimiter);
 
     // get the rest of words from command
     while (p_tokenized_string != NULL) 
     {
-        // ?
+        // * - matches zero or more characters
+        if (strchr(p_tokenized_string, asterisk) != NULL) 
+        {
+            printf("B4\n%s\n", copy_input_string);
+            glob_t pglob;
+            int result_asterick = glob("*.tx``t", GLOB_NOCHECK, NULL, &pglob);
+            for (size_t i = 0; i < pglob.gl_pathc; i++)
+                printf("%zu: %s\n", i, pglob.gl_pathv[i]);
+            globfree(&pglob);
+
+            printf("*ISwildcard\n");
+            is_wildcard = true;
+            break;
+        }
+
+        // ? - Matches exactly one character
         if (strchr(p_tokenized_string, question_mark) != NULL) 
         {  
             printf("?ISwildcard\n");
-            isWildcard = true;
-            break;
-        }
-        // !
-        if (strchr(p_tokenized_string, asterisk) != NULL) 
-        {
-            printf("*ISwildcard\n");
-            isWildcard = true;
-            break;
-        }
-        // #
-        if (strchr(p_tokenized_string, hash_tag) != NULL) 
-        {
-            printf("#ISwildcard\n");
-            isWildcard = true;
+            is_wildcard = true;
             break;
         }
 
@@ -85,16 +89,16 @@ char wildcard_globbing(char inputString[MAX_LIMIT])
     }   
 
     // wildcard character not present, return original
-    if (!isWildcard) 
+    if (!is_wildcard) 
     {
         printf("RETURN ORIGINAL ARRAY\n");
-        return *inputString;
+        return *input_string;
     } 
     else
     {
         printf("RETURN MODIFIED ARRAY\n");
-        return *copyInputString;
+        return *copy_input_string;
     }
 
-`    
+
 }
