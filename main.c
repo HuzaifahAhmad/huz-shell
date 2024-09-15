@@ -66,9 +66,24 @@ char wildcard_globbing(char input_string[MAX_LIMIT])
         if (strchr(p_tokenized_string, asterisk) != NULL) 
         {
             glob_t pglob;
-            int result_asterick = glob(p_tokenized_string, GLOB_NOCHECK, NULL, &pglob);
-            for (size_t i = 0; i < pglob.gl_pathc; i++)
-                printf("%s\n", pglob.gl_pathv[i]);
+            int result_asterisk = glob(p_tokenized_string, 0, NULL, &pglob); // Use the pattern from user input
+
+            // error handling for glob
+            if (result_asterisk == 0) {
+                // successfully matched files
+                for (size_t i = 0; i < pglob.gl_pathc; i++) {
+                    printf("%s\n", pglob.gl_pathv[i]);
+                }
+            } else if (result_asterisk == GLOB_NOMATCH) {
+                printf("%s\n", p_tokenized_string);
+            } else if (result_asterisk == GLOB_ABORTED) {
+                printf("Read error (permission issue) while processing the pattern: %s\n", p_tokenized_string);
+            } else if (result_asterisk == GLOB_NOSPACE) {
+                printf("Out of memory while processing the pattern: %s\n", p_tokenized_string);
+            } else {
+                printf("Unknown error occurred while processing the pattern: %s\n", p_tokenized_string);
+            }
+
             globfree(&pglob);
 
             is_wildcard = true;
@@ -79,10 +94,23 @@ char wildcard_globbing(char input_string[MAX_LIMIT])
         if (strchr(p_tokenized_string, question_mark) != NULL) 
         {  
             glob_t pglob2;
-            int result_q_mark = glob(p_tokenized_string, GLOB_NOCHECK, NULL, &pglob2);
-            for (size_t i = 0; i < pglob2.gl_pathc; i++)
-                printf("%s\n", pglob2.gl_pathv[i]);
-            globfree(&pglob2);
+            int result_q_mark = glob(p_tokenized_string, 0, NULL, &pglob2);
+
+            // error handling for glob
+            if (result_q_mark == 0) {
+                // successfully matched files
+                for (size_t i = 0; i < pglob2.gl_pathc; i++) {
+                    printf("%s\n", pglob2.gl_pathv[i]);
+                }
+            } else if (result_q_mark == GLOB_NOMATCH) {
+                printf("%s\n", p_tokenized_string);
+            } else if (result_q_mark == GLOB_ABORTED) {
+                printf("Read error (permission issue) while processing the pattern: %s\n", p_tokenized_string);
+            } else if (result_q_mark == GLOB_NOSPACE) {
+                printf("Out of memory while processing the pattern: %s\n", p_tokenized_string);
+            } else {
+                printf("Unknown error occurred while processing the pattern: %s\n", p_tokenized_string);
+            }
 
             is_wildcard = true;
             break;
