@@ -1,12 +1,12 @@
+#include <glob.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <stdbool.h>
-#include <glob.h>
-#include <fnmatch.h>
 
-#define MAX_LIMIT 100
+#define MAX_LIMIT 1000
 
-char wildcard_globbing(char inputString[MAX_LIMIT]);
+char* wildcard_globbing(char inputString[MAX_LIMIT]);
 
 int main() {
     char get_command_from_user[MAX_LIMIT];
@@ -30,7 +30,9 @@ int main() {
         }
 
         // check for any wildcard characters in the input
-        wildcard_globbing(get_command_from_user);
+        char *result_from_wildcard_globbing_funtion = wildcard_globbing(get_command_from_user);
+        strcpy(get_command_from_user, result_from_wildcard_globbing_funtion);
+        printf("%s\n", get_command_from_user);
     }
 
     printf("\n");
@@ -41,7 +43,7 @@ int main() {
 }
 
 // checks for wildcard characters (?, *, #)
-char wildcard_globbing(char input_string[MAX_LIMIT]) 
+char* wildcard_globbing(char input_string[MAX_LIMIT]) 
 {
     char question_mark = '?';
     char asterisk = '*';
@@ -51,6 +53,7 @@ char wildcard_globbing(char input_string[MAX_LIMIT])
     bool is_wildcard = false;
     char *ptr_copy_input_string;
     char combined_command_for_globbing[250];
+    char *result_string = NULL;
 
     // copy input string
     strcpy(copy_input_string, input_string);
@@ -58,6 +61,16 @@ char wildcard_globbing(char input_string[MAX_LIMIT])
     ptr_copy_input_string = copy_input_string;
     // get first word from command
     p_tokenized_string = strtok(copy_input_string, delimiter);
+
+    // initialize to empty string
+    result_string = malloc(1);
+    if (result_string == NULL) 
+    {
+        printf("memory allocation failed\n");
+        return NULL;
+    }
+    result_string[0] = '\0';
+
 
     // get the rest of words from command
     while (p_tokenized_string != NULL) 
@@ -72,8 +85,19 @@ char wildcard_globbing(char input_string[MAX_LIMIT])
             if (result_asterisk == 0) {
                 // successfully matched files
                 for (size_t i = 0; i < pglob.gl_pathc; i++) {
-                    printf("%s\n", pglob.gl_pathv[i]);
-                }
+                    size_t new_len = strlen(result_string) + strlen(pglob.gl_pathv[i]) + 2; // +1 for space or null terminator
+                    result_string = realloc(result_string, new_len);
+                    if (result_string == NULL) {
+                        printf("Memory reallocation failed\n");
+                        globfree(&pglob);
+                        return NULL;
+                    }
+                    // concatenate the file path into result_string
+                    strcat(result_string, pglob.gl_pathv[i]);
+                    if (i < pglob.gl_pathc - 1) {
+                        strcat(result_string, " "); // add a space between file paths
+                    }                
+                    }
             } else if (result_asterisk == GLOB_NOMATCH) {
                 printf("%s\n", p_tokenized_string);
             } else if (result_asterisk == GLOB_ABORTED) {
@@ -90,17 +114,28 @@ char wildcard_globbing(char input_string[MAX_LIMIT])
             break;
         }
 
-        // ? - Matches exactly one character
+        // ? - matches exactly one character
         if (strchr(p_tokenized_string, question_mark) != NULL) 
         {  
             glob_t pglob2;
             int result_q_mark = glob(p_tokenized_string, 0, NULL, &pglob2);
 
-            // error handling for glob
+             // error handling for glob
             if (result_q_mark == 0) {
                 // successfully matched files
                 for (size_t i = 0; i < pglob2.gl_pathc; i++) {
-                    printf("%s\n", pglob2.gl_pathv[i]);
+                    size_t new_len = strlen(result_string) + strlen(pglob2.gl_pathv[i]) + 2; // +1 for space or null terminator
+                    result_string = realloc(result_string, new_len);
+                    if (result_string == NULL) {
+                        printf("Memory reallocation failed\n");
+                        globfree(&pglob2);
+                        return NULL;
+                    }
+                    // concatenate the file path into result_string
+                    strcat(result_string, pglob2.gl_pathv[i]);
+                    if (i < pglob2.gl_pathc - 1) {
+                        strcat(result_string, " "); // add a space between file paths
+                    }
                 }
             } else if (result_q_mark == GLOB_NOMATCH) {
                 printf("%s\n", p_tokenized_string);
@@ -123,14 +158,9 @@ char wildcard_globbing(char input_string[MAX_LIMIT])
     // wildcard character not present, return original
     if (!is_wildcard) 
     {
-        printf("RETURN ORIGINAL ARRAY\n");
-        printf("RETURN ARRAY: %s\n", input_string);
-        return *input_string;
-    } 
-    else
-    {
-        printf("RETURN MODIFIED ARRAY\n");
-        printf("RETURN ARRAY: %s\n", copy_input_string);
-        return *copy_input_string;
+        free(result_string);
+        result_string = strdup(input_string);
     }
+
+    return result_string;
 }
