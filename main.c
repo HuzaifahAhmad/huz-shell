@@ -54,13 +54,24 @@ char* wildcard_globbing(char input_string[MAX_LIMIT])
     char *ptr_copy_input_string;
     char combined_command_for_globbing[250];
     char *result_string = NULL;
-
+    char *save_command;
     // copy input string
     strcpy(copy_input_string, input_string);
 
     ptr_copy_input_string = copy_input_string;
     // get first word from command
     p_tokenized_string = strtok(copy_input_string, delimiter);
+
+    char command_word[MAX_LIMIT];
+    if (p_tokenized_string != NULL)  
+    {
+        strncpy(command_word, p_tokenized_string, MAX_LIMIT);
+        command_word[MAX_LIMIT - 1] = '\0'; // null termination
+    }
+    else 
+    {
+        return strdup(input_string);
+    }
 
     // initialize to empty string
     result_string = malloc(1);
@@ -70,6 +81,7 @@ char* wildcard_globbing(char input_string[MAX_LIMIT])
         return NULL;
     }
     result_string[0] = '\0';
+
 
 
     // get the rest of words from command
@@ -85,19 +97,26 @@ char* wildcard_globbing(char input_string[MAX_LIMIT])
             if (result_asterisk == 0) {
                 // successfully matched files
                 for (size_t i = 0; i < pglob.gl_pathc; i++) {
+
                     size_t new_len = strlen(result_string) + strlen(pglob.gl_pathv[i]) + 2; // +1 for space or null terminator
                     result_string = realloc(result_string, new_len);
+
                     if (result_string == NULL) {
                         printf("Memory reallocation failed\n");
                         globfree(&pglob);
                         return NULL;
                     }
+
                     // concatenate the file path into result_string
                     strcat(result_string, pglob.gl_pathv[i]);
                     if (i < pglob.gl_pathc - 1) {
                         strcat(result_string, " "); // add a space between file paths
-                    }                
-                    }
+                    }   
+                }
+
+                // concatenate the files with the command
+                
+
             } else if (result_asterisk == GLOB_NOMATCH) {
                 printf("%s\n", p_tokenized_string);
             } else if (result_asterisk == GLOB_ABORTED) {
@@ -124,13 +143,16 @@ char* wildcard_globbing(char input_string[MAX_LIMIT])
             if (result_q_mark == 0) {
                 // successfully matched files
                 for (size_t i = 0; i < pglob2.gl_pathc; i++) {
+
                     size_t new_len = strlen(result_string) + strlen(pglob2.gl_pathv[i]) + 2; // +1 for space or null terminator
                     result_string = realloc(result_string, new_len);
+
                     if (result_string == NULL) {
                         printf("Memory reallocation failed\n");
                         globfree(&pglob2);
                         return NULL;
                     }
+
                     // concatenate the file path into result_string
                     strcat(result_string, pglob2.gl_pathv[i]);
                     if (i < pglob2.gl_pathc - 1) {
@@ -160,7 +182,25 @@ char* wildcard_globbing(char input_string[MAX_LIMIT])
     {
         free(result_string);
         result_string = strdup(input_string);
+        return result_string;
     }
 
-    return result_string;
+    size_t final_len = strlen(command_word) + strlen(result_string) + 2;
+    char *final_result = malloc(final_len);
+
+    if (final_result == NULL) 
+    {
+        printf("Memory Allocation Failed\n");
+        free(result_string);
+        return NULL;
+    }
+
+    if (is_wildcard)
+        snprintf(final_result, final_len, "%s %s", command_word, result_string);
+        // bug to fix
+    free(result_string);
+    
+    
+    return final_result;
+
 }
