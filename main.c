@@ -62,8 +62,20 @@ char* wildcard_globbing(char input_string[MAX_LIMIT])
     // get first word from command
     p_tokenized_string = strtok(copy_input_string, delimiter);
 
+
+
+    // initialize to empty string
+    result_string = malloc(1);
+    if (result_string == NULL) 
+    {
+        printf("memory allocation failed\n");
+        return NULL;
+    }
+
+    result_string[0] = '\0';
+    
     char command_word[MAX_LIMIT];
-    if (p_tokenized_string != NULL)  
+    if (p_tokenized_string != NULL )  
     {
         strncpy(command_word, p_tokenized_string, MAX_LIMIT);
         command_word[MAX_LIMIT - 1] = '\0'; // null termination
@@ -73,20 +85,13 @@ char* wildcard_globbing(char input_string[MAX_LIMIT])
         return strdup(input_string);
     }
 
-    // initialize to empty string
-    result_string = malloc(1);
-    if (result_string == NULL) 
-    {
-        printf("memory allocation failed\n");
-        return NULL;
-    }
-    result_string[0] = '\0';
-
-
-
     // get the rest of words from command
     while (p_tokenized_string != NULL) 
     {
+
+
+
+
         // * - matches zero or more characters
         if (strchr(p_tokenized_string, asterisk) != NULL) 
         {
