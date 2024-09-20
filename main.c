@@ -1,8 +1,7 @@
-#include <glob.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 #include <stdbool.h>
+
 #include "header.h"
 
 #define MAX_LIMIT 1000
