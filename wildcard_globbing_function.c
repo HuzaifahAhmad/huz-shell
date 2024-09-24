@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include "header.h"
+
 #define MAX_LIMIT 1000
 
 

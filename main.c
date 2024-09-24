@@ -30,7 +30,27 @@ int main() {
         // check for any wildcard characters in the input
         char *result_from_wildcard_globbing_funtion = wildcard_globbing(get_command_from_user);
         strcpy(get_command_from_user, result_from_wildcard_globbing_funtion);
-        printf("%s\n", get_command_from_user);
+        printf("WILDCARD GLOBBING: %s\n", get_command_from_user);
+
+        // parsing after expanding wildcard character
+        char delimiter[] = " ";
+        char *p_first_tokenized_string;
+        p_first_tokenized_string = strtok(get_command_from_user, delimiter);
+
+        int count = 0;
+
+        while (p_first_tokenized_string != NULL) 
+        {
+            count++;
+            printf("%s\n", p_first_tokenized_string);
+            p_first_tokenized_string = strtok(NULL, delimiter);
+            if (count == 4) {
+                break;
+            }
+        }
+
+
+
     }
 
     printf("\n");
