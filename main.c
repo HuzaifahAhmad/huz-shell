@@ -35,19 +35,20 @@ int main() {
         // parsing after expanding wildcard character
         char delimiter[] = " ";
         char *p_first_tokenized_string;
-        p_first_tokenized_string = strtok(get_command_from_user, delimiter);
+        char pipe_symbol[] = "|";
 
-        int count = 0;
+
+        p_first_tokenized_string = strtok(get_command_from_user, delimiter);
 
         while (p_first_tokenized_string != NULL) 
         {
-            count++;
             printf("%s\n", p_first_tokenized_string);
             p_first_tokenized_string = strtok(NULL, delimiter);
-            if (count == 4) {
-                break;
-            }
+
+            
         }
+
+        
 
 
 
