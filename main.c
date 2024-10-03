@@ -27,29 +27,15 @@ int main() {
             break;
         }
 
+
         // check for any wildcard characters in the input
         char *result_from_wildcard_globbing_funtion = wildcard_globbing(get_command_from_user);
         strcpy(get_command_from_user, result_from_wildcard_globbing_funtion);
         printf("WILDCARD GLOBBING: %s\n", get_command_from_user);
 
-        // parsing after expanding wildcard character
-        char delimiter[] = " ";
-        char *p_first_tokenized_string;
-        char pipe_symbol[] = "|";
-
-
-        p_first_tokenized_string = strtok(get_command_from_user, delimiter);
-
-        while (p_first_tokenized_string != NULL) 
-        {
-            printf("%s\n", p_first_tokenized_string);
-            p_first_tokenized_string = strtok(NULL, delimiter);
-
-            
-        }
-
         
-
+        // parsing after expanding wildcard character
+        parsing_handler(get_command_from_user);
 
 
     }
