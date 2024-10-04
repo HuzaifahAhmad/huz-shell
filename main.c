@@ -35,6 +35,7 @@ int main() {
 
         
         // parsing after expanding wildcard character
+        // remove printing of tokenized words after
         parsing_handler(get_command_from_user);
 
 

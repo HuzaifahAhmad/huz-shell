@@ -5,13 +5,14 @@
 #include "header.h"
 
 
-void parsing_handler(char input_string[]) 
+char* parsing_handler(char input_string[]) 
 {
     char delimiter[] = " ";
     char *p_first_tokenized_string;
     char **parsed_string = NULL;
     int index = 0, size = 1;
 
+    // allocate for an array of pointer to strings 
     parsed_string = malloc(1 * sizeof(char*));
 
     p_first_tokenized_string = strtok(input_string, delimiter);
@@ -27,10 +28,12 @@ void parsing_handler(char input_string[])
         p_first_tokenized_string = strtok(NULL, delimiter);
     }
 
+    
     for (int i = 0; i < size - 1; i++) 
     {
         printf("%s\n", parsed_string[i]);
     }
 
     free(parsed_string); 
+    return *parsed_string;
 }
