@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 #include "header.h"
 
@@ -35,9 +36,12 @@ int main() {
 
         
         // parsing after expanding wildcard character
-        // remove printing of tokenized words after
-        parsing_handler(get_command_from_user);
+        char **parsed_command = parsing_handler(get_command_from_user);
 
+        // piping handler - checks for pipes and handles accordingly
+        piping_handler(parsed_command);
+
+        free(parsed_command); 
 
     }
 
