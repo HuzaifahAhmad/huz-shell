@@ -39,7 +39,8 @@ int main() {
         char **parsed_command = parsing_handler(get_command_from_user);
 
         // piping handler - checks for pipes and handles accordingly
-        piping_handler(parsed_command);
+        // piping_handler(parsed_command);
+        executing_command(parsed_command);
 
         free(parsed_command); 
 
