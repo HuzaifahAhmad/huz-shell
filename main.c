@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "header.h"
+#include <dirent.h>
 
 #define MAX_LIMIT 1000
 
@@ -32,7 +33,7 @@ int main() {
         // check for any wildcard characters in the input
         char *result_from_wildcard_globbing_funtion = wildcard_globbing(get_command_from_user);
         strcpy(get_command_from_user, result_from_wildcard_globbing_funtion);
-        printf("WILDCARD GLOBBING: %s\n", get_command_from_user);
+        // printf("WILDCARD GLOBBING: %s\n", get_command_from_user);
 
         
         // parsing after expanding wildcard character
@@ -41,6 +42,7 @@ int main() {
         // piping handler - checks for pipes and handles accordingly
         // piping_handler(parsed_command);
         executing_command(parsed_command);
+
 
         free(parsed_command); 
 
