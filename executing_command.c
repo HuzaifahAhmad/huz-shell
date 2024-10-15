@@ -1,8 +1,8 @@
+#include <sys/wait.h>
+#include <unistd.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
-#include <dirent.h>
-
 
 #define _POSIX_SOURCE
 
@@ -46,15 +46,34 @@ void executing_command(char **tokenized_array_for_execution)
         }
 
 
-        // history command implementation
+        // external command implementation
+        pid_t pid, wpid;
+        int status;
+
+        pid = fork();
+        if (pid == 0) {
+            // child process
+            if (execvp(tokenized_array_for_execution[0], tokenized_array_for_execution) == -1) {
+            perror("lsh");
+            }
+            exit(EXIT_FAILURE);
+        } else if (pid < 0) {
+            // error forking
+            perror("lsh");
+        } else {
+            // parent process
+            do {
+            wpid = waitpid(pid, &status, WUNTRACED);
+            } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+        }
 
 
         // command not found implementation
-        else 
-        {
-            printf("huz-shell: Command not found\n");
-            break;
-        }
+        // else 
+        // {
+        //     printf("huz-shell: Command not found\n");
+        //     break;
+        // }
 
 
      }
