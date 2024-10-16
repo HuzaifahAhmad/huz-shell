@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 #include "header.h"
-#include <dirent.h>
+#include "header.h"
 
 #define MAX_LIMIT 1000
 
@@ -12,6 +12,14 @@
 int main() {
     char get_command_from_user[MAX_LIMIT];
     char exit[] = "exit";
+    char *built_in_commands_strings[] = {
+        "pwd",
+        "cd",
+        "echo",
+        "history"
+    };
+
+    int num_of_built_in_commands = sizeof(built_in_commands_strings) / sizeof(char *);
 
     printf("START OF SHELL\n");
     
@@ -41,11 +49,29 @@ int main() {
 
         // piping handler - checks for pipes and handles accordingly
         // piping_handler(parsed_command);
-        executing_command(parsed_command);
+
+
+        if (parsed_command[0] != NULL) 
+        {
+            for (int i = 0; i < num_of_built_in_commands; i++) 
+            {
+                if (strcmp(parsed_command[0], built_in_commands_strings[i]) == 0)
+                {
+                    execute_built_in_command(parsed_command);
+                    break;
+                }
+                else 
+                {
+                    execute_external_command(parsed_command);
+                    break;
+                }
+                
+            }
+        }
+
 
 
         free(parsed_command); 
-
     }
 
     printf("\n");
