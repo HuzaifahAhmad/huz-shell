@@ -9,7 +9,7 @@
 
 void execute_built_in_command(char **built_in_command_execution) 
 {
-    char cwd[1024];
+    printf("\nMADE IT TO BUILTIN COMMANDS\n");
 
     for (int i = 0; built_in_command_execution[i] != NULL; i++) 
     {
@@ -17,17 +17,18 @@ void execute_built_in_command(char **built_in_command_execution)
         // pwd command implementation
         if (strcmp(built_in_command_execution[0], "pwd") == 0)
         {
+            char cwd[1024];
+
             if (getcwd(cwd, sizeof(cwd)) != NULL) {
                 printf("%s\n", cwd);  // print current directory
             } else {
                 perror("getcwd() error");  // handle error
             }
-            break;
         }
 
 
         // cd command implementation
-        else if (strcmp(built_in_command_execution[0], "cd") == 0)
+        if (strcmp(built_in_command_execution[0], "cd") == 0)
         {
             chdir(built_in_command_execution[i + 1]);
             printf("directory changed\n");
@@ -36,7 +37,7 @@ void execute_built_in_command(char **built_in_command_execution)
 
 
         // echo command implementation
-        else if (strcmp(built_in_command_execution[0], "echo") == 0)
+        if (strcmp(built_in_command_execution[0], "echo") == 0)
         {
             for (int j = 1; built_in_command_execution[j] != NULL; j++)
             {
@@ -46,12 +47,19 @@ void execute_built_in_command(char **built_in_command_execution)
             break;
         }
 
-        // command not found implementation
-        else 
+        else if (strcmp(built_in_command_execution[0], "history") == 0)
         {
-            printf("huz-shell: Command not found\n");
-            break;
+            printf("HISTORY\n");
         }
+
+
+
+        // command not found implementation
+        // else 
+        // {
+        //     printf("huz-shell: Command not found\n");
+        //     break;
+        // }
 
      }
 }
