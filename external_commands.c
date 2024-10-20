@@ -8,9 +8,16 @@
 
 // external command implementation
 bool is_input_null = false;
+bool is_command_history = false;
 
 void execute_external_command(char **external_command_execution)
-{
+{  
+    if (strcmp(external_command_execution[0], "history") == 0) {
+        is_command_history = true;
+    }
+
+    if (!is_command_history) 
+    {
         if (external_command_execution[0] == NULL)
         {
             is_input_null = true;
@@ -39,4 +46,5 @@ void execute_external_command(char **external_command_execution)
                 } while (!WIFEXITED(status) && !WIFSIGNALED(status));
             }
         }
+    }
 }
